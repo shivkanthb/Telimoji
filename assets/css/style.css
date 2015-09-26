@@ -202,6 +202,26 @@ i {
     background-size: cover;
 }
 
+#habout {
+	background: url(../images/team1.jpg) no-repeat center top;
+	padding-top: 230px;
+	text-align:center;
+	background-attachment: relative;
+	background-position: center center;
+	min-height: 700px;
+	width: 100%;
+	
+    -webkit-background-size: 100%;
+    -moz-background-size: 100%;
+    -o-background-size: 100%;
+    background-size: 100%;
+
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
 #h h1 {
 	color: white;
 	font-size: 75px;
@@ -228,11 +248,11 @@ i {
 	position: relative;
 }
 .s01 {
-	background-image: url(../img/s01.png);
+	background-image: url(../images/bg1.png);
 }
 
 .s02 {
-	background-image: url(../img/s02.jpg);
+	background-image: url(../images/bg2.png);
 }
 
 
