@@ -152,7 +152,7 @@ input {
 }
 
 .subscribe-input {
-	float: left;
+	/*float: left;*/
 	width: 60%;
 	text-align: left;
 	margin-right: 2px;
@@ -183,7 +183,7 @@ i {
 
 /* HEADER SECTION */
 #h {
-	background: url(../img/header.jpg) no-repeat center top;
+	background: url(../images/homebg.png) no-repeat center top;
 	padding-top: 230px;
 	text-align:center;
 	background-attachment: relative;

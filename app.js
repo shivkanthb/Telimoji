@@ -28,6 +28,16 @@ app.get('/about', function(req,res){
 	res.render('about');
 });
 
+app.get('/contact', function(req,res){
+
+	res.render('contact');
+});
+
+app.get('/product', function(req,res){
+
+	res.render('product');
+});
+
 
 
 app.listen(port, function(){
