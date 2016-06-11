@@ -229,7 +229,7 @@ bot.on('message', function(msg) {
     // console.log(JSON.stringify(msg));
   if(msg.text)
   {
-    if(incoming_msg=="goo.gl/QfWdYt") {}
+    if(incoming_msg=="goo.gl/QfWdYt" || incoming_msg=="/help") {}
     else if(incoming_msg!="undefined" && incoming_msg.indexOf('/imoji')!=-1 && incoming_msg!="/imoji" ) {}
     else
     {
