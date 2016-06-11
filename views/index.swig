@@ -40,6 +40,7 @@
 	
 	<div class="footer">
 		<a href="https://twitter.com/shivkanthb">@shivkanthb</a>
+		<div>Stickers by <a href="https://imoji.io">Imoji.</div>
 	</div>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>

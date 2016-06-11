@@ -247,7 +247,7 @@ bot.on('message', function(msg) {
     // console.log(JSON.stringify(msg));
   if(msg.text)
   {
-    botlytics.incoming(msg.text,fromId, function(err, response, body){} );
+    botlytics.incoming(msg.text,msg.chat.id, function(err, response, body){} );
 
     if(incoming_msg=="goo.gl/QfWdYt" || incoming_msg=="/help") {}
     else if(incoming_msg!="undefined" && incoming_msg.indexOf('/imoji')!=-1 && incoming_msg!="/imoji" ) {}
