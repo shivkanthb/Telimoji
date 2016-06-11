@@ -25,6 +25,14 @@ var imojiClient = new (require("imoji-node"))({
   
  var exec = require('child_process').exec;
    
+
+var botlytics = require('botlytics');
+
+var bot_token ="e1de0cc7a2f0c62f";  // Include your bot token here. 
+
+botlytics.setBotToken(bot_token);  
+
+
 var env = process.env.NODE_ENV || 'development';
 app.locals.ENV = env;
 app.locals.ENV_DEVELOPMENT = env == 'development';
@@ -113,6 +121,7 @@ var getStickers = function(input,type, callback) {
 					type :'article',
 					id : 999 + 1 + '#',
 					// message_text : "goo.gl/QfWdYt",
+                    thumb_url:'https://media.imoji.io/dcd/dcd079a5-a72c-48d5-8718-517880c2514b/bordered-150.png',
                     message_text:'goo.gl/QfWdYt',
 					title : "Oops. No matching sticker found."
 				}
@@ -144,6 +153,7 @@ bot.on('inline_query', function(q){
 	if(input.length!=0)
 	{
 		getStickers(input,"photo", function(output) {
+            botlytics.incoming(input,q.id, function(err, response, body){} );
 			console.log("Stickers output received");
 			bot.answerInlineQuery(q.id, output, {
 				next_offset: '',
@@ -176,6 +186,7 @@ bot.onText(/\/help/, function(msg, match) {
     fromId = msg.from.id;
     var msg="Hey. There are two ways to use the imoji bot.\n\n1. Type '@imoji_bot' followed by a keyword and wait for the list to sticker options to load. Eg - @imoji_bot happy \n\n2. Add imoji_bot to your group chats and use '/imoji' followed by a keyword to get a random sticker. Eg - /imoji cool.";
     bot.sendMessage(fromId,msg);
+    botlytics.outgoing(msg,fromId, function(err, response, body){} );
 });
 
 bot.onText(/\/imoji (.+)/, function(msg, match) {
@@ -189,8 +200,7 @@ bot.onText(/\/imoji (.+)/, function(msg, match) {
         fromId = msg.from.id;
          
     var keyword = match[1];
-    
-    
+
     console.log("Key searched for is %s",keyword);
 
     //  bot.sendMessage(fromId,"type /imoji followed by a search term or complete sentence to get a random sticker"); 
@@ -212,43 +222,19 @@ bot.onText(/\/imoji (.+)/, function(msg, match) {
             var cmd = "wget \'"+url+"\' && mv bordered-150.png "+new_name;
 
             download(url, new_name, function(){
-                console.log('image download process');
-                // if (error != null) {
-                // console.log("ERROR: " + error);
-                // }
-                // else {
-                    
+                // console.log('image download process');
+                    botlytics.outgoing("Sticker sent",fromId, function(err, response, body){} );
+
                     bot.sendPhoto(fromId, new_name, {caption: ''}).then(function () {
                         resp.statusCode=200;
-                        // res.send();
                         //deleting the image from heroku
                          fs.unlink(new_name,function() {
-                            console.log("image deleted");
+                            // console.log("image deleted");
                         });
                         
                     });
-                    
-                    
-                // }
+
             });
-        //     child = exec(cmd, function (error, stdout, stderr) {
-        //         if (error !== null) {
-        //         console.log("ERROR: " + error);
-        //         }
-        //         else {
-                    
-        //             bot.sendPhoto(fromId, new_name, {caption: ''}).then(function () {
-        //                 resp.statusCode=200;
-        //                 // res.send();
-        //                 //deleting the image from heroku
-        //                 child = exec("rm "+new_name, function (error, stdout, stderr) {
-        //                 });
-        //             });
-                    
-                    
-        //         }
-                
-        //  });
         }
      });
     
@@ -261,17 +247,20 @@ bot.on('message', function(msg) {
     // console.log(JSON.stringify(msg));
   if(msg.text)
   {
+    botlytics.incoming(msg.text,fromId, function(err, response, body){} );
+
     if(incoming_msg=="goo.gl/QfWdYt" || incoming_msg=="/help") {}
     else if(incoming_msg!="undefined" && incoming_msg.indexOf('/imoji')!=-1 && incoming_msg!="/imoji" ) {}
     else
     {
-        var errormsg;
+        var errormsg="Keyword missing error msg";
         if(msg.chat.id!=fromId)
             errormsg = "Type /imoji followed by a search term or complete sentence on your group chat to get a random sticker!";
          else
             errormsg = "Type /imoji followed by a search term or complete sentence to get a random sticker!";
         
         bot.sendMessage(fromId,errormsg); 
+        botlytics.outgoing(errormsg,fromId, function(err, response, body){} );
     } 
   }
   
