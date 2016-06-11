@@ -50,9 +50,8 @@ var fs = require('fs');
 
 var download = function(uri, filename, callback){
   request.head(uri, function(err, res, body){
-    console.log('content-type:', res.headers['content-type']);
-    console.log('content-length:', res.headers['content-length']);
-
+    // console.log('content-type:', res.headers['content-type']);
+    // console.log('content-length:', res.headers['content-length']);
     request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
   });
 };
@@ -223,8 +222,10 @@ bot.onText(/\/imoji (.+)/, function(msg, match) {
                         resp.statusCode=200;
                         // res.send();
                         //deleting the image from heroku
-                        child = exec("rm "+new_name, function (error, stdout, stderr) {
+                         fs.unlink(new_name,function() {
+                            console.log("image deleted");
                         });
+                        
                     });
                     
                     
