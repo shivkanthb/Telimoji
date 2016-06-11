@@ -1,0 +1,89 @@
+/*@font-face{font-family:Circular;src:url("../fonts/circular-light.woff") format("woff");font-weight:200;font-style:normal}@font-face{font-family:Circular;src:url("../fonts/circular-book.woff") format("woff");font-weight:400;font-style:normal}@font-face{font-family:Circular;src:url("../fonts/circular-medium.woff") format("woff");font-weight:600;font-style:normal}@font-face{font-family:Circular;src:url("../fonts/circular-bold.woff") format("woff");font-weight:800;font-style:normal}*/
+
+@font-face {
+  font-family: 'mueller_gsj400-light';
+  src: url('../fonts/muellergsj-400-light-webfont.eot');
+  src: url('../fonts/muellergsj-400-light-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/muellergsj-400-light-webfont.woff2') format('woff2'),
+       url('../fonts/muellergsj-400-light-webfont.woff') format('woff'),
+       url('../fonts/muellergsj-400-light-webfont.ttf') format('truetype'),
+       url('../fonts/muellergsj-400-light-webfont.svg#mueller_gsj400-light') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+html {
+  font-family: sans-serif;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+      text-decoration: none;
+}
+
+::selection,
+::-moz-selection {
+  background: #ff0000;
+}
+
+
+
+body {
+  margin: 0;
+  font-family: 'mueller_gsj400-light';
+  font-size: 19px;
+  color: rgba(0,0,0,0.96);
+  line-height: 1.6;
+  letter-spacing: -0.0em;
+  opacity: 1;
+  -webkit-transform: translateY(0%);
+      -ms-transform: translateY(0%);
+          transform: translateY(0%);
+  -webkit-transition: all 1s cubic-bezier(0,.6,.18,1); 
+     -moz-transition: all 1s cubic-bezier(0,.6,.18,1); 
+          transition: all 1s cubic-bezier(0,.6,.18,1);
+          padding: 128px 0;
+			text-align: center;
+      background-color: #ECF0F1;
+}
+
+#logo {
+			width: 64px;
+			display: block;
+			margin: 0 auto;
+		}
+
+.wrapper {
+  margin-top:100px;
+}
+
+.telegram {
+    background: #FFDD67;
+     border-radius: 5px; 
+    display: inline-block;
+    margin-top: 24px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.telegram a {
+    padding: 18px 48px;
+    display: block;
+    color:#FFF;
+}
+
+.footer {
+  font-size: 16px;
+  margin-top:100px;
+  margin-bottom:-100px;
+}
+
+.footer a {
+  color:#333;
+}
