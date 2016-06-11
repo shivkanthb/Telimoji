@@ -163,6 +163,7 @@ var getRandomSticker = function(key, callback) {
 };
 
 bot.onText(/\/help/, function(msg, match) {
+    fromId = msg.from.id;
     var msg="Hey. There are two ways to use the imoji bot.\n\n1. Type '@imoji_bot' followed by a keyword and wait for the list to sticker options to load. Eg - @imoji_bot happy \n\n2. Add imoji_bot to your group chats and use '/imoji' followed by a keyword to get a random sticker. Eg - /imoji cool.";
     bot.sendMessage(fromId,msg);
 });
