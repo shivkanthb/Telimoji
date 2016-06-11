@@ -46,6 +46,17 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 var request = require('request');
+var fs = require('fs');
+
+var download = function(uri, filename, callback){
+  request.head(uri, function(err, res, body){
+    console.log('content-type:', res.headers['content-type']);
+    console.log('content-length:', res.headers['content-length']);
+
+    request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+  });
+};
+
 
 var getStickers = function(input,type, callback) {
 	
@@ -200,7 +211,9 @@ bot.onText(/\/imoji (.+)/, function(msg, match) {
             url = url.substring(0,pos+4);
             var new_name = fromId+"-bordered.png";
             var cmd = "wget \'"+url+"\' && mv bordered-150.png "+new_name;
-            child = exec(cmd, function (error, stdout, stderr) {
+
+            download(url, new_name, function(error){
+                console.log('image download process');
                 if (error !== null) {
                 console.log("ERROR: " + error);
                 }
@@ -216,8 +229,25 @@ bot.onText(/\/imoji (.+)/, function(msg, match) {
                     
                     
                 }
+            });
+        //     child = exec(cmd, function (error, stdout, stderr) {
+        //         if (error !== null) {
+        //         console.log("ERROR: " + error);
+        //         }
+        //         else {
+                    
+        //             bot.sendPhoto(fromId, new_name, {caption: ''}).then(function () {
+        //                 resp.statusCode=200;
+        //                 // res.send();
+        //                 //deleting the image from heroku
+        //                 child = exec("rm "+new_name, function (error, stdout, stderr) {
+        //                 });
+        //             });
+                    
+                    
+        //         }
                 
-         });
+        //  });
         }
      });
     
