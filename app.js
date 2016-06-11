@@ -212,12 +212,12 @@ bot.onText(/\/imoji (.+)/, function(msg, match) {
             var new_name = fromId+"-bordered.png";
             var cmd = "wget \'"+url+"\' && mv bordered-150.png "+new_name;
 
-            download(url, new_name, function(error){
+            download(url, new_name, function(){
                 console.log('image download process');
-                if (error !== null) {
-                console.log("ERROR: " + error);
-                }
-                else {
+                // if (error != null) {
+                // console.log("ERROR: " + error);
+                // }
+                // else {
                     
                     bot.sendPhoto(fromId, new_name, {caption: ''}).then(function () {
                         resp.statusCode=200;
@@ -228,7 +228,7 @@ bot.onText(/\/imoji (.+)/, function(msg, match) {
                     });
                     
                     
-                }
+                // }
             });
         //     child = exec(cmd, function (error, stdout, stderr) {
         //         if (error !== null) {
