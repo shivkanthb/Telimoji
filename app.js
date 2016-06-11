@@ -148,22 +148,6 @@ bot.on('inline_query', function(q){
 
 
 var getRandomSticker = function(key, callback) {
-  
-    
-    // imojiClient.random({
-    //     query: key
-    //     })
-    //     .then(function (random) {
-    //         var url = random.results[0].urls.png.thumb;
-    //         // res.status(200).json({"status":"SUCCESS","url":url});
-    //         callback(url);
-    //     })
-    //     .catch(function (err) {
-    //         console.error(err);
-    //         // res.status(500);
-            
-    //         callback("ERROR");
-    //     });
     
     request("http://realmojiapi.herokuapp.com/api?input="+key, function(err, response, body) {
        
@@ -265,7 +249,7 @@ bot.on('message', function(msg) {
 
 var http = require("http");
 setInterval(function() {
-    http.get("http://tinymemoirs.herokuapp.com");
+    http.get("http://telimoji.herokuapp.com");
 }, 300000); // every 5 minutes (300000)
 
 app.use('/', routes);
