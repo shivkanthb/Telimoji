@@ -56,6 +56,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 var request = require('request');
 var fs = require('fs');
 
+var gemoji = require('gemoji');
+
 var download = function(uri, filename, callback){
   request.head(uri, function(err, res, body){
     // console.log('content-type:', res.headers['content-type']);
@@ -203,8 +205,16 @@ bot.onText(/\/imoji (.+)/, function(msg, match) {
 
     console.log("Key searched for is %s",keyword);
 
-    if(keyword=="😍")
-    keyword="love";
+    var result = gemoji.unicode[keyword]; 
+    if(typeof result !='undefined')
+    {
+        // keyword = result['name'].replace(/_/g, " ");
+        var res = result['name'].split("_");
+        keyword = res[0];
+        console.log("Emoji spotted. keyword translated to %s",keyword);
+    }
+    else
+        console.log("Keyword remains as "+keyword);
     //  bot.sendMessage(fromId,"type /imoji followed by a search term or complete sentence to get a random sticker"); 
      
      getRandomSticker(keyword, function(resp) {
