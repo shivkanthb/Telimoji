@@ -203,7 +203,6 @@ bot.onText(/\/imoji (.+)/, function(msg, match) {
 
     console.log("Key searched for is %s",keyword);
 
-
     //  bot.sendMessage(fromId,"type /imoji followed by a search term or complete sentence to get a random sticker"); 
      
      getRandomSticker(keyword, function(resp) {
