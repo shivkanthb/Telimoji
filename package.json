@@ -9,6 +9,7 @@
     "body-parser": "^1.13.3",
     "botlytics": "^1.0.2",
     "cookie-parser": "^1.3.3",
+    "dotenv": "^4.0.0",
     "express": "^4.13.3",
     "gemoji": "^1.0.0",
     "imoji-node": "^0.2.1",

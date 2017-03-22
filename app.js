@@ -8,19 +8,20 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var swig = require('swig');
 
+require('dotenv').config()
+
 var routes = require('./routes/index');
-var users = require('./routes/user');
 
 var app = express();
 
 var tgbot = require('node-telegram-bot-api');
 
-var bot = new tgbot("234037388:AAHi2XEQOYZhMyzspCX-EI8_sEpchmLkFHc", { polling: { timeout: 2000, interval: 500 }});
+var bot = new tgbot(process.env.BOT_KEY, { polling: { timeout: 2000, interval: 500 }});
 
 
 var imojiClient = new (require("imoji-node"))({
-        apiKey: '778664ed-1548-4ce4-b7ac-0c4d78d538c5',
-        apiSecret: 'U2FsdGVkX19AhiDjv8dXWqYvmHPWQj87COJcOTDbzi8='
+        apiKey: process.env.IMOJI_API_KEY,
+        apiSecret: process.env.IMOJI_API_SECRET
     });
   
  var exec = require('child_process').exec;
@@ -28,7 +29,7 @@ var imojiClient = new (require("imoji-node"))({
 
 var botlytics = require('botlytics');
 
-var bot_token ="e1de0cc7a2f0c62f";  // Include your bot token here. 
+var bot_token =process.env.BOTLYTICS_TOKEN;  // Include your bot token here. 
 
 botlytics.setBotToken(bot_token);  
 
@@ -79,11 +80,8 @@ var getStickers = function(input,type, callback) {
         numResults: 18
     })
         .then(function (searchResults) {
-			// console.log("DAO");
             // console.log(searchResults['results'].length);
-            
-            vals= searchResults.results;
-            
+           vals= searchResults.results;
            if(vals.length!=0)
            {
                 for(var j=0;j<vals.length;j++)
@@ -142,10 +140,6 @@ var getStickers = function(input,type, callback) {
 };
 
 
-
-
-
-
 bot.on('inline_query', function(q){
 	console.log("Query q is :"+ q['query']);
 	var input = q['query'];
@@ -169,17 +163,13 @@ bot.on('inline_query', function(q){
 });
 
 
-var getRandomSticker = function(key, callback) {
-    
+var getRandomSticker = function(key, callback) {   
     request("http://realmojiapi.herokuapp.com/api?input="+key, function(err, response, body) {
-       
-    // console.log(body);
        if(err) console.log("error");
        else
        {
            callback(body);
        }
-        
     });
     
 };
@@ -200,11 +190,8 @@ bot.onText(/\/imoji (.+)/, function(msg, match) {
     }
     else
         fromId = msg.from.id;
-         
     var keyword = match[1];
-
-    console.log("Key searched for is %s",keyword);
-
+    // console.log("Key searched for is %s",keyword);
     var result = gemoji.unicode[keyword]; 
     if(typeof result !='undefined')
     {
@@ -286,7 +273,6 @@ setInterval(function() {
 }, 300000); // every 5 minutes (300000)
 
 app.use('/', routes);
-app.use('/users', users);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
