@@ -7,33 +7,22 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var swig = require('swig');
-
 require('dotenv').config()
-
 var routes = require('./routes/index');
-
 var app = express();
-
 var tgbot = require('node-telegram-bot-api');
-
 var bot = new tgbot(process.env.BOT_KEY, { polling: { timeout: 2000, interval: 500 }});
-
-
 var imojiClient = new (require("imoji-node"))({
         apiKey: process.env.IMOJI_API_KEY,
         apiSecret: process.env.IMOJI_API_SECRET
     });
-  
- var exec = require('child_process').exec;
-   
-
+var exec = require('child_process').exec;
 var botlytics = require('botlytics');
-
 var bot_token =process.env.BOTLYTICS_TOKEN;  // Include your bot token here. 
-
 botlytics.setBotToken(bot_token);  
-
-
+var request = require('request');
+var fs = require('fs');
+var gemoji = require('gemoji');
 var env = process.env.NODE_ENV || 'development';
 app.locals.ENV = env;
 app.locals.ENV_DEVELOPMENT = env == 'development';
@@ -54,11 +43,6 @@ app.use(bodyParser.urlencoded({
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-var request = require('request');
-var fs = require('fs');
-
-var gemoji = require('gemoji');
-
 var download = function(uri, filename, callback){
   request.head(uri, function(err, res, body){
     // console.log('content-type:', res.headers['content-type']);
@@ -69,8 +53,7 @@ var download = function(uri, filename, callback){
 
 
 var getStickers = function(input,type, callback) {
-	
-//    console.log("Came to this function wuth input "+input);
+   // console.log("user input "+input);
    var vals=[];
    var elem ={};
    var telegram_results=[];
@@ -111,8 +94,7 @@ var getStickers = function(input,type, callback) {
 						elem['photo_width']=150;
 					}
 					
-					telegram_results.push(elem);
-                    
+					telegram_results.push(elem);        
                 }
            }
            else
@@ -125,10 +107,8 @@ var getStickers = function(input,type, callback) {
                     message_text:'goo.gl/QfWdYt',
 					title : "Oops. No matching sticker found."
 				}
-				
 				telegram_results.push(temp1);
 		   }
-  			
 				callback(telegram_results);
         })
         .catch(function (err) {
@@ -136,16 +116,14 @@ var getStickers = function(input,type, callback) {
 			callback(telegram_results);
             // res.status(500);
         });
-	
 };
 
-
+/* inline query event */
 bot.on('inline_query', function(q){
 	console.log("Query q is :"+ q['query']);
 	var input = q['query'];
 	console.log(q['query'].length);
 	var result = [];
-	
 	if(input.length!=0)
 	{
 		getStickers(input,"photo", function(output) {
@@ -154,12 +132,9 @@ bot.on('inline_query', function(q){
 			bot.answerInlineQuery(q.id, output, {
 				next_offset: '',
 				cache_time: 100
-			});
-			
+			});		
 		});
 	}
-	
-		
 });
 
 
@@ -167,11 +142,8 @@ var getRandomSticker = function(key, callback) {
     request("http://realmojiapi.herokuapp.com/api?input="+key, function(err, response, body) {
        if(err) console.log("error");
        else
-       {
            callback(body);
-       }
-    });
-    
+    }); 
 };
 
 bot.onText(/\/help/, function(msg, match) {
@@ -208,10 +180,7 @@ bot.onText(/\/imoji (.+)/, function(msg, match) {
         var resp = JSON.parse(resp);
     
         if(resp.status!="SUCCESS")
-        {
-            bot.sendMessage(privateSender,"Sorry, couldnt find a sticker for your keyword "+keyword);
-        }
-            
+            bot.sendMessage(privateSender,"Sorry, couldnt find a sticker for your keyword "+keyword);  
         else
         {
             var url=resp.url;
@@ -236,14 +205,12 @@ bot.onText(/\/imoji (.+)/, function(msg, match) {
             });
         }
      });
-    
 });
 
-bot.on('message', function(msg) {
-    var fromId=msg.from.id;
-   var incoming_msg = msg.text;
 
-    // console.log(JSON.stringify(msg));
+bot.on('message', function(msg) {
+  var fromId=msg.from.id;
+  var incoming_msg = msg.text;
   if(msg.text)
   {
     botlytics.incoming(msg.text,msg.chat.id, function(err, response, body){} );
@@ -262,30 +229,21 @@ bot.on('message', function(msg) {
         botlytics.outgoing(errormsg,fromId, function(err, response, body){} );
     } 
   }
-  
-   
 });
-
-
-var http = require("http");
-setInterval(function() {
-    http.get("http://telimoji.herokuapp.com");
-}, 300000); // every 5 minutes (300000)
 
 app.use('/', routes);
 
-/// catch 404 and forward to error handler
+// catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
 
-/// error handlers
+// error handlers
 
 // development error handler
 // will print stacktrace
-
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
@@ -310,3 +268,12 @@ app.use(function(err, req, res, next) {
 
 
 module.exports = app;
+
+/* never sleep heroku */
+var http = require("http");
+if(process.env.HEROKU_DOMAIN)
+{
+    setInterval(function() {
+        http.get(process.env.HEROKU_DOMAIN);
+    }, 300000); // every 5 minutes (300000)
+}
