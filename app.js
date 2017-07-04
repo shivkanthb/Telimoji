@@ -65,13 +65,10 @@ var getStickers = function(input,type, callback) {
         .then(function (searchResults) {
             // console.log(searchResults['results'].length);
            vals= searchResults.results;
-           if(vals.length!=0)
-           {
-                for(var j=0;j<vals.length;j++)
-                {
+           if (vals.length!=0) {
+                for(var j=0;j<vals.length;j++) {
                     elem={};
-					if(type=='article')
-					{
+					if (type=='article') {
 						elem.type='article';
                     	elem.id=vals[j]['id'];
 						var img_url = vals[j].images.bordered.png['150'].url;
@@ -83,8 +80,7 @@ var getStickers = function(input,type, callback) {
 						elem.message_text = img_url || "dai";
 						
 					}
-					else if(type=="photo")
-					{
+					else if (type=="photo") {
 						elem.type='photo';
 						elem.id=vals[j]['id'];
 						var img_url = vals[j].images.bordered.png['150'].url;
@@ -97,8 +93,7 @@ var getStickers = function(input,type, callback) {
 					telegram_results.push(elem);        
                 }
            }
-           else
-		   {
+           else {
 			   var temp1 = {
 					type :'article',
 					id : 999 + 1 + '#',
@@ -120,15 +115,14 @@ var getStickers = function(input,type, callback) {
 
 /* inline query event */
 bot.on('inline_query', function(q){
-	console.log("Query q is :"+ q['query']);
+	// console.log("Query q is :"+ q['query']);
 	var input = q['query'];
-	console.log(q['query'].length);
+	// console.log(q['query'].length);
 	var result = [];
-	if(input.length!=0)
-	{
+	if (input.length!=0) {
 		getStickers(input,"photo", function(output) {
             botlytics.incoming(input,q.id, function(err, response, body){} );
-			console.log("Stickers output received");
+			// console.log("Stickers output received");
 			bot.answerInlineQuery(q.id, output, {
 				next_offset: '',
 				cache_time: 100
@@ -140,9 +134,13 @@ bot.on('inline_query', function(q){
 
 var getRandomSticker = function(key, callback) {   
     request("http://realmojiapi.herokuapp.com/api?input="+key, function(err, response, body) {
-       if(err) console.log("error");
-       else
-           callback(body);
+       if (err) {
+        console.log("error");
+        callback(err, null);
+       }
+       else {
+           callback(null, body);
+       }
     }); 
 };
 
@@ -156,33 +154,36 @@ bot.onText(/\/help/, function(msg, match) {
 bot.onText(/\/imoji (.+)/, function(msg, match) {
     var fromId;
     var privateSender = msg.from.id;
-    if(msg.chat.id)
-    {
+    if (msg.chat.id) {
         fromId = msg.chat.id;
     }
-    else
+    else {
         fromId = msg.from.id;
+    }
     var keyword = match[1];
     // console.log("Key searched for is %s",keyword);
     var result = gemoji.unicode[keyword]; 
-    if(typeof result !='undefined')
-    {
+    if (typeof result !='undefined') {
         // keyword = result['name'].replace(/_/g, " ");
         var res = result['name'].split("_");
         keyword = res[0];
         console.log("Emoji spotted. keyword translated to %s",keyword);
     }
-    else
+    else {
         console.log("Keyword remains as "+keyword);
+    }
     //  bot.sendMessage(fromId,"type /imoji followed by a search term or complete sentence to get a random sticker"); 
      
-     getRandomSticker(keyword, function(resp) {
+     getRandomSticker(keyword, function(err, resp) {
         var resp = JSON.parse(resp);
-    
-        if(resp.status!="SUCCESS")
+        
+        if (err) {
+            bot.sendMessage(privateSender,"Sorry, something went wrong finding a sticker for your keyword "+keyword); 
+            return;
+        }
+        if (resp.status!="SUCCESS")
             bot.sendMessage(privateSender,"Sorry, couldnt find a sticker for your keyword "+keyword);  
-        else
-        {
+        else {
             var url=resp.url;
             var pos=url.indexOf('.png');
             url = url.substring(0,pos+4);
@@ -211,16 +212,14 @@ bot.onText(/\/imoji (.+)/, function(msg, match) {
 bot.on('message', function(msg) {
   var fromId=msg.from.id;
   var incoming_msg = msg.text;
-  if(msg.text)
-  {
+  if (msg.text) {
     botlytics.incoming(msg.text,msg.chat.id, function(err, response, body){} );
 
-    if(incoming_msg=="goo.gl/QfWdYt" || incoming_msg=="/help") {}
-    else if(incoming_msg!="undefined" && incoming_msg.indexOf('/imoji')!=-1 && incoming_msg!="/imoji" ) {}
-    else
-    {
+    if (incoming_msg=="goo.gl/QfWdYt" || incoming_msg=="/help") {}
+    else if (incoming_msg!="undefined" && incoming_msg.indexOf('/imoji')!=-1 && incoming_msg!="/imoji" ) {}
+    else {
         var errormsg="Keyword missing error msg";
-        if(msg.chat.id!=fromId)
+        if (msg.chat.id!=fromId) 
             errormsg = "Type /imoji followed by a search term or complete sentence on your group chat to get a random sticker!";
          else
             errormsg = "Type /imoji followed by a search term or complete sentence to get a random sticker!";
