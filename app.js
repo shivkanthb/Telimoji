@@ -115,13 +115,13 @@ var getStickers = function(input,type, callback) {
 
 /* inline query event */
 bot.on('inline_query', function(q){
-	// console.log("Query q is :"+ q['query']);
+	console.log("Query q is :"+ q['query']);
 	var input = q['query'];
-	// console.log(q['query'].length);
+	console.log(q['query'].length);
 	var result = [];
 	if (input.length!=0) {
 		getStickers(input,"photo", function(output) {
-            botlytics.incoming(input,q.id, function(err, response, body){} );
+            botlytics.incoming({text: input, conversation_identifier: q.id}, function(err, response, body){} );
 			// console.log("Stickers output received");
 			bot.answerInlineQuery(q.id, output, {
 				next_offset: '',
@@ -147,8 +147,14 @@ var getRandomSticker = function(key, callback) {
 bot.onText(/\/help/, function(msg, match) {
     fromId = msg.from.id;
     var msg="Hey. There are two ways to use the imoji bot.\n\n1. Type '@imoji_bot' followed by a keyword and wait for the list to sticker options to load. Eg - @imoji_bot happy \n\n2. Add imoji_bot to your group chats and use '/imoji' followed by a keyword to get a random sticker. Eg - /imoji cool.";
-    bot.sendMessage(fromId,msg);
-    botlytics.outgoing(msg,fromId, function(err, response, body){} );
+    bot.sendMessage(fromId,msg).then(function(resp) {
+      // ...snip...
+    }).catch(function(error) {
+      if (error.response && error.response.statusCode === 403) {
+        // ...snip...
+      }
+    });
+    botlytics.outgoing({text: msg, conversation_identifier:fromId}, function(err, response, body){} );
 });
 
 bot.onText(/\/imoji (.+)/, function(msg, match) {
@@ -178,11 +184,23 @@ bot.onText(/\/imoji (.+)/, function(msg, match) {
         var resp = JSON.parse(resp);
         
         if (err) {
-            bot.sendMessage(privateSender,"Sorry, something went wrong finding a sticker for your keyword "+keyword); 
+            bot.sendMessage(privateSender,"Sorry, something went wrong finding a sticker for your keyword "+keyword).then(function(resp) {
+              // ...snip...
+            }).catch(function(error) {
+              if (error.response && error.response.statusCode === 403) {
+                // ...snip...
+              }
+            }); 
             return;
         }
         if (resp.status!="SUCCESS")
-            bot.sendMessage(privateSender,"Sorry, couldnt find a sticker for your keyword "+keyword);  
+            bot.sendMessage(privateSender,"Sorry, couldnt find a sticker for your keyword "+keyword).then(function(resp) {
+              // ...snip...
+            }).catch(function(error) {
+              if (error.response && error.response.statusCode === 403) {
+                // ...snip...
+              }
+            });  
         else {
             var url=resp.url;
             var pos=url.indexOf('.png');
@@ -192,7 +210,7 @@ bot.onText(/\/imoji (.+)/, function(msg, match) {
 
             download(url, new_name, function(){
                 // console.log('image download process');
-                    botlytics.outgoing("Sticker sent",fromId, function(err, response, body){} );
+                    botlytics.outgoing({text: "Sticker sent", conversation_identifier: fromId}, function(err, response, body){} );
 
                     bot.sendPhoto(fromId, new_name, {caption: ''}).then(function () {
                         resp.statusCode=200;
@@ -213,7 +231,7 @@ bot.on('message', function(msg) {
   var fromId=msg.from.id;
   var incoming_msg = msg.text;
   if (msg.text) {
-    botlytics.incoming(msg.text,msg.chat.id, function(err, response, body){} );
+    botlytics.incoming({text: msg.text, conversation_identifier: msg.chat.id}, function(err, response, body){} );
 
     if (incoming_msg=="goo.gl/QfWdYt" || incoming_msg=="/help") {}
     else if (incoming_msg!="undefined" && incoming_msg.indexOf('/imoji')!=-1 && incoming_msg!="/imoji" ) {}
@@ -224,8 +242,14 @@ bot.on('message', function(msg) {
          else
             errormsg = "Type /imoji followed by a search term or complete sentence to get a random sticker!";
         
-        bot.sendMessage(fromId,errormsg); 
-        botlytics.outgoing(errormsg,fromId, function(err, response, body){} );
+        bot.sendMessage(fromId,errormsg).then(function(resp) {
+          // ...snip...
+        }).catch(function(error) {
+          if (error.response && error.response.statusCode === 403) {
+            // ...snip...
+          }
+        }); 
+        botlytics.outgoing({text: errormsg, conversation_identifier: fromId}, function(err, response, body){} );
     } 
   }
 });
